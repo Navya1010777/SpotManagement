@@ -77,8 +77,14 @@ public class SpotController {
     public ResponseEntity<List<SpotResponseDTO>> searchSpots(SpotSearchCriteria criteria) {
         return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
-    
-    // PostRating needs to be added
+
+    @PostMapping("/{spotId}/rating")
+    @PreAuthorize("hasRole('VEHICLE_OWNER')")
+    public ResponseEntity<SpotResponseDTO> postRating(
+            @PathVariable Long spotId,
+            @RequestParam Double rating) {
+        return ResponseEntity.ok(spotService.postSpotRating(spotId, rating));
+    }
     
     @PutMapping("/{spotId}/rating")
     @PreAuthorize("hasRole('VEHICLE_OWNER')")
