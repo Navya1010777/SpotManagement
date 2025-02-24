@@ -131,14 +131,22 @@ public class SpotService {
         
         return spots.stream()
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
-            .filter(spot -> criteria.getHasEVCharging() == null || spot.isHasEVCharging() == criteria.getHasEVCharging())
+            .filter(spot -> criteria.getHasEVCharging() == null || spot.hasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
             .filter(spot -> criteria.getSupportedVehicleType() == null || 
                     spot.getSupportedVehicleTypes().contains(criteria.getSupportedVehicleType()))
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
-	
+
+	public SpotResponseDTO postSpotRating(Long spotId, Double rating) {
+		Spot spot = spotRepository.findById(spotId)
+				.orElseThrow(() -> new ResourceNotFoundException("Spot not found with id : " + spotId));
+		spot.setRating(rating);
+		spot = spotRepository.save(spot);
+		return convertToDTO(spot);
+	}
+
 	public SpotResponseDTO updateSpotRating(Long spotId, Double rating) {
 		Spot spot = spotRepository.findById(spotId)
 				.orElseThrow(() -> new ResourceNotFoundException("Spot not found with id : " + spotId));

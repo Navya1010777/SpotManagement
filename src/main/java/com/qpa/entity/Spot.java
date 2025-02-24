@@ -154,7 +154,7 @@ public class Spot {
 		this.location = location;
 	}
 
-	public boolean isHasEVCharging() {
+	public boolean hasEVCharging() {
 		return hasEVCharging;
 	}
 
