@@ -34,6 +34,8 @@ public class WebController {
             } else if (authentication.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ROLE_VEHICLE_OWNER"))) {
                 return "redirect:/vehicle-owner/dashboard";
+            } else {
+            	return "redirect:/admin/dashboard";
             }
         }
         return "redirect:/login";
