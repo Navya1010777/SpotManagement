@@ -36,7 +36,7 @@ public class Spot {
 	@ManyToOne
 	@JoinColumn(name = "owner_id", nullable = false)
 	private User owner;
-	
+
 	@Enumerated(EnumType.STRING)
 	private SpotType spotType;
 	
@@ -69,7 +69,7 @@ public class Spot {
     @Lob
     @ElementCollection
     @CollectionTable(name = "spot_images", joinColumns = @JoinColumn(name = "spot_id"))
-    @Column(name = "image_data", columnDefinition = "BOLB")
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
     private List<byte[]> spotImages;
     
     @ElementCollection
@@ -225,6 +225,16 @@ public class Spot {
 	public void setSupportedVehicleTypes(Set<VehicleType> supportedVehicleTypes) {
 		this.supportedVehicleTypes = supportedVehicleTypes;
 	}
-    
-    
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public boolean isHasEVCharging() {
+		return hasEVCharging;
+	}
 }
