@@ -2,6 +2,7 @@ package com.qpa.dto;
 
 import com.qpa.entity.PriceType;
 import com.qpa.entity.SpotType;
+import com.qpa.entity.User;
 import com.qpa.entity.VehicleType;
 
 import java.time.DayOfWeek;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SpotCreateDTO {
 	private String spotNumber;
 	private SpotType spotType;
+	private User owner;
 	private LocationDTO location;
 	private boolean hasEVCharging;
 	private double price;
@@ -25,12 +27,10 @@ public class SpotCreateDTO {
 
 	}
 
-	public SpotCreateDTO(String spotNumber, SpotType spotType, LocationDTO location, boolean hasEVCharging,
-			double price, PriceType priceType, List<DayOfWeek> availableDays, List<MultipartFile> images,
-			Set<VehicleType> supportedVehicle) {
-		super();
+	public SpotCreateDTO(String spotNumber, SpotType spotType, User owner, LocationDTO location, boolean hasEVCharging, double price, PriceType priceType, List<DayOfWeek> availableDays, List<MultipartFile> images, Set<VehicleType> supportedVehicle) {
 		this.spotNumber = spotNumber;
 		this.spotType = spotType;
+		this.owner = owner;
 		this.location = location;
 		this.hasEVCharging = hasEVCharging;
 		this.price = price;
@@ -110,5 +110,13 @@ public class SpotCreateDTO {
 
 	public void setSupportedVehicle(Set<VehicleType> supportedVehicle) {
 		this.supportedVehicle = supportedVehicle;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 }

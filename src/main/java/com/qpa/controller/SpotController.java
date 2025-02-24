@@ -2,6 +2,8 @@ package com.qpa.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +31,7 @@ import com.qpa.service.SpotService;
 @RestController
 @RequestMapping("/api/spots")
 public class SpotController {
+    private static final Logger log = LoggerFactory.getLogger(SpotController.class);
     private final SpotService spotService;
     private final UserRepository userRepository;
     
@@ -40,16 +43,16 @@ public class SpotController {
     
     // Spot Owner endpoints
     @PostMapping
-    @PreAuthorize("hasRole('SPOT_OWNER')")
     public ResponseEntity<SpotResponseDTO> createSpot(
             @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart("images") List<MultipartFile> images) {
         spotDTO.setImages(images);
+        spotDTO.setOwner(userRepository.findById(getCurrentUserId()).get()); // Might throw exception, needs to be handled
+
         return ResponseEntity.ok(spotService.createSpot(spotDTO, getCurrentUserId()));
     }
     
     @PutMapping("/{spotId}")
-    @PreAuthorize("hasRole('SPOT_OWNER')")
     public ResponseEntity<SpotResponseDTO> updateSpot(
             @PathVariable Long spotId,
             @RequestPart("spot") SpotCreateDTO spotDTO,
@@ -59,27 +62,23 @@ public class SpotController {
     }
     
     @DeleteMapping("/{spotId}")
-    @PreAuthorize("hasRole('SPOT_OWNER')")
     public ResponseEntity<Void> deleteSpot(@PathVariable Long spotId) {
         spotService.deleteSpot(spotId);
         return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/owner")
-    @PreAuthorize("hasRole('SPOT_OWNER')")
     public ResponseEntity<List<SpotResponseDTO>> getOwnerSpots() {
         return ResponseEntity.ok(spotService.getSpotByOwner(getCurrentUserId()));
     }
     
     // Vehicle Owner endpoints
     @GetMapping("/search")
-    @PreAuthorize("hasRole('VEHICLE_OWNER')")
     public ResponseEntity<List<SpotResponseDTO>> searchSpots(SpotSearchCriteria criteria) {
         return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
 
     @PostMapping("/{spotId}/rating")
-    @PreAuthorize("hasRole('VEHICLE_OWNER')")
     public ResponseEntity<SpotResponseDTO> postRating(
             @PathVariable Long spotId,
             @RequestParam Double rating) {
@@ -87,7 +86,6 @@ public class SpotController {
     }
     
     @PutMapping("/{spotId}/rating")
-    @PreAuthorize("hasRole('VEHICLE_OWNER')")
     public ResponseEntity<SpotResponseDTO> updateRating(
             @PathVariable Long spotId,
             @RequestParam Double rating) {
@@ -96,20 +94,17 @@ public class SpotController {
     
     // Admin endpoints
     @GetMapping("/admin/all")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SpotResponseDTO>> getAllSpots() {
         return ResponseEntity.ok(spotService.getAllSpots());
     }
     
     @DeleteMapping("/admin/{spotId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> adminDeleteSpot(@PathVariable Long spotId) {
         spotService.deleteSpot(spotId);
         return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/admin/statistics")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SpotStatistics> getStatistics() {
         return ResponseEntity.ok(spotService.getStatistics());
     }

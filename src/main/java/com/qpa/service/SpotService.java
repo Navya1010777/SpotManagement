@@ -6,15 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qpa.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.qpa.dto.SpotCreateDTO;
-import com.qpa.dto.SpotResponseDTO;
-import com.qpa.dto.SpotSearchCriteria;
-import com.qpa.dto.SpotStatistics;
 import com.qpa.entity.Location;
 import com.qpa.entity.Spot;
 import com.qpa.entity.SpotStatus;
@@ -28,6 +27,7 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class SpotService {
+	private static final Logger log = LoggerFactory.getLogger(SpotService.class);
 	private final SpotRepository spotRepository;
 	private final LocationRepository locationRepository;
 	
@@ -47,7 +47,8 @@ public class SpotService {
 		spot.setPriceType(spotDTO.getPriceType());
 		spot.setAvailableDays(spotDTO.getAvailableDays());
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
-		
+		spot.setOwner(spotDTO.getOwner());
+
 		List<byte[]> images = new ArrayList<>();
 		for (MultipartFile file : spotDTO.getImages()) {
 			try {
@@ -62,7 +63,7 @@ public class SpotService {
 		BeanUtils.copyProperties(spotDTO.getLocation(), location);
 		location = locationRepository.save(location);
 		spot.setLocation(location);
-		
+
 		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
 	}
@@ -197,10 +198,17 @@ public class SpotService {
 	        spotsByCity
 	    );
 	}
-	
+
 	private SpotResponseDTO convertToDTO(Spot spot) {
 		SpotResponseDTO dto = new SpotResponseDTO();
 		BeanUtils.copyProperties(spot, dto);
+
+		if (spot.getLocation() != null) {
+			LocationDTO locationDTO = new LocationDTO();
+			BeanUtils.copyProperties(spot.getLocation(), locationDTO);
+			dto.setLocation(locationDTO);
+		}
+
 		return dto;
 	}
 }
