@@ -9,6 +9,7 @@ public class LocationDTO {
 	private String city;
 	private String state;
 	private String pincode;
+	private String landmark;
 	private int floorNumber;
 	
 	public LocationDTO() {
@@ -16,7 +17,7 @@ public class LocationDTO {
 	}
 
 	public LocationDTO(double latitude, double longitude, String buildingName, String streetAddress, String area,
-			String city, String state, String pincode, int floorNumber) {
+			String city, String state, String pincode, int floorNumber, String landmark) {
 		super();
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -27,6 +28,7 @@ public class LocationDTO {
 		this.state = state;
 		this.pincode = pincode;
 		this.floorNumber = floorNumber;
+		this.landmark = landmark;
 	}
 
 	public double getLatitude() {
@@ -99,5 +101,13 @@ public class LocationDTO {
 
 	public void setFloorNumber(int floorNumber) {
 		this.floorNumber = floorNumber;
+	}
+
+	public String getLandmark() {
+		return landmark;
+	}
+
+	public void setLandmark(String landmark) {
+		this.landmark = landmark;
 	}
 }

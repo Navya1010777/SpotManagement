@@ -6,8 +6,6 @@ import com.qpa.entity.VehicleType;
 
 public class SpotSearchCriteria {
     private String city;
-    private String area;
-    private String street;
     private SpotType spotType;
     private Boolean hasEVCharging;
     private PriceType priceType;
@@ -21,8 +19,6 @@ public class SpotSearchCriteria {
 			PriceType priceType, VehicleType supportedVehicleType) {
 		super();
 		this.city = city;
-		this.area = area;
-		this.street = street;
 		this.spotType = spotType;
 		this.hasEVCharging = hasEVCharging;
 		this.priceType = priceType;
@@ -35,22 +31,6 @@ public class SpotSearchCriteria {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public String getArea() {
-		return area;
-	}
-
-	public void setArea(String area) {
-		this.area = area;
-	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
 	}
 
 	public SpotType getSpotType() {

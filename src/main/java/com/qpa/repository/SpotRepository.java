@@ -21,6 +21,6 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
 	List<Spot> findByLocation_Area(String area);
 	List<Spot> findByOwnerId(Long ownerId);
 	
-	@Query("SELECT s FROM Spot s WHERE s.location.city = :city OR s.location.area = :area OR s.location.streetAddress LIKE %:street%")
-	List<Spot> findByLocationFilters(String city, String area, String street);
+	@Query("SELECT s FROM Spot s WHERE s.location.city = :city")
+	List<Spot> findByLocationFilters(String city);
 }
