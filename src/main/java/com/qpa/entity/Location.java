@@ -14,7 +14,7 @@ public class Location {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long locationId;
-	
+
 	private double latitude;
 	private double longitude;
 	private String buildingName;
@@ -23,13 +23,14 @@ public class Location {
 	private String city;
 	private String state;
 	private String pincode;
+	private String landmark;
 	private int floorNumber;
 	
 	@OneToOne(mappedBy = "location")
 	private Spot spot;
 
 	public Location(Long locationId, double latitude, double longitude, String buildingName, String streetAddress,
-			String area, String city, String state, String pincode, int floorNumber, Spot spot) {
+			String area, String city, String state, String pincode, int floorNumber, Spot spot, String landmark) {
 		super();
 		this.locationId = locationId;
 		this.latitude = latitude;
@@ -42,6 +43,7 @@ public class Location {
 		this.pincode = pincode;
 		this.floorNumber = floorNumber;
 		this.spot = spot;
+		this.landmark = landmark;
 	}
 
 	public Location() {
@@ -135,7 +137,12 @@ public class Location {
 	public void setSpot(Spot spot) {
 		this.spot = spot;
 	}
-	
-	
-	
+
+	public String getLandmark() {
+		return landmark;
+	}
+
+	public void setLandmark(String landmark) {
+		this.landmark = landmark;
+	}
 }

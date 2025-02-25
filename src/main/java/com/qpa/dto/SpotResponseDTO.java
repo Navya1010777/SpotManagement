@@ -18,7 +18,6 @@ public class SpotResponseDTO {
 	private boolean hasEVCharging;
 	private double price;
 	private PriceType priceType;
-	private List<DayOfWeek> availableDays;
 	private Double rating;
 	private List<byte[]> spotImages;
 	private Set<VehicleType> supportedVehicleTypes;
@@ -28,7 +27,7 @@ public class SpotResponseDTO {
 	}
 
 	public SpotResponseDTO(Long spotId, String spotNumber, SpotType spotType, SpotStatus status, LocationDTO location,
-			boolean hasEVCharging, double price, PriceType priceType, List<DayOfWeek> availableDays, Double rating,
+			boolean hasEVCharging, double price, PriceType priceType, Double rating,
 			List<byte[]> spotImages, Set<VehicleType> supportedVehicleTypes) {
 		super();
 		this.spotId = spotId;
@@ -39,7 +38,6 @@ public class SpotResponseDTO {
 		this.hasEVCharging = hasEVCharging;
 		this.price = price;
 		this.priceType = priceType;
-		this.availableDays = availableDays;
 		this.rating = rating;
 		this.spotImages = spotImages;
 		this.supportedVehicleTypes = supportedVehicleTypes;
@@ -107,14 +105,6 @@ public class SpotResponseDTO {
 
 	public void setPriceType(PriceType priceType) {
 		this.priceType = priceType;
-	}
-
-	public List<DayOfWeek> getAvailableDays() {
-		return availableDays;
-	}
-
-	public void setAvailableDays(List<DayOfWeek> availableDays) {
-		this.availableDays = availableDays;
 	}
 
 	public Double getRating() {

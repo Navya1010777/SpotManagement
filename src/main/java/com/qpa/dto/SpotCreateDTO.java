@@ -19,7 +19,6 @@ public class SpotCreateDTO {
 	private boolean hasEVCharging;
 	private double price;
 	private PriceType priceType;
-	private List<DayOfWeek> availableDays;
 	private List<MultipartFile> images;
 	private Set<VehicleType> supportedVehicle;
 	
@@ -27,7 +26,7 @@ public class SpotCreateDTO {
 
 	}
 
-	public SpotCreateDTO(String spotNumber, SpotType spotType, User owner, LocationDTO location, boolean hasEVCharging, double price, PriceType priceType, List<DayOfWeek> availableDays, List<MultipartFile> images, Set<VehicleType> supportedVehicle) {
+	public SpotCreateDTO(String spotNumber, SpotType spotType, User owner, LocationDTO location, boolean hasEVCharging, double price, PriceType priceType, List<MultipartFile> images, Set<VehicleType> supportedVehicle) {
 		this.spotNumber = spotNumber;
 		this.spotType = spotType;
 		this.owner = owner;
@@ -35,7 +34,6 @@ public class SpotCreateDTO {
 		this.hasEVCharging = hasEVCharging;
 		this.price = price;
 		this.priceType = priceType;
-		this.availableDays = availableDays;
 		this.images = images;
 		this.supportedVehicle = supportedVehicle;
 	}
@@ -86,14 +84,6 @@ public class SpotCreateDTO {
 
 	public void setPriceType(PriceType priceType) {
 		this.priceType = priceType;
-	}
-
-	public List<DayOfWeek> getAvailableDays() {
-		return availableDays;
-	}
-
-	public void setAvailableDays(List<DayOfWeek> availableDays) {
-		this.availableDays = availableDays;
 	}
 
 	public List<MultipartFile> getImages() {

@@ -9,15 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.qpa.dto.SpotCreateDTO;
@@ -31,25 +23,20 @@ import com.qpa.service.SpotService;
 @RestController
 @RequestMapping("/api/spots")
 public class SpotController {
-    private static final Logger log = LoggerFactory.getLogger(SpotController.class);
+
     private final SpotService spotService;
-    private final UserRepository userRepository;
     
     @Autowired
-    public SpotController(SpotService spotService, UserRepository userRepository) {
+    public SpotController(SpotService spotService) {
         this.spotService = spotService;
-        this.userRepository = userRepository;
     }
-    
+
     // Spot Owner endpoints
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<SpotResponseDTO> createSpot(
             @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart("images") List<MultipartFile> images) {
-        spotDTO.setImages(images);
-        spotDTO.setOwner(userRepository.findById(getCurrentUserId()).get()); // Might throw exception, needs to be handled
-
-        return ResponseEntity.ok(spotService.createSpot(spotDTO, getCurrentUserId()));
+        return ResponseEntity.ok(spotService.createSpot(spotDTO, images));
     }
     
     @PutMapping("/{spotId}")
@@ -57,8 +44,7 @@ public class SpotController {
             @PathVariable Long spotId,
             @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
-        spotDTO.setImages(images);
-        return ResponseEntity.ok(spotService.updateSpot(spotId, spotDTO));
+        return ResponseEntity.ok(spotService.updateSpot(spotId, spotDTO, images));
     }
     
     @DeleteMapping("/{spotId}")
@@ -69,50 +55,32 @@ public class SpotController {
     
     @GetMapping("/owner")
     public ResponseEntity<List<SpotResponseDTO>> getOwnerSpots() {
-        return ResponseEntity.ok(spotService.getSpotByOwner(getCurrentUserId()));
+        return ResponseEntity.ok(spotService.getSpotByOwner());
     }
     
     // Vehicle Owner endpoints
-    @GetMapping("/search")
-    public ResponseEntity<List<SpotResponseDTO>> searchSpots(SpotSearchCriteria criteria) {
-        return ResponseEntity.ok(spotService.searchSpots(criteria));
-    }
-
-    @PostMapping("/{spotId}/rating")
-    public ResponseEntity<SpotResponseDTO> postRating(
+    @PatchMapping("/{spotId}/rate")
+    public ResponseEntity<SpotResponseDTO> rate(
             @PathVariable Long spotId,
             @RequestParam Double rating) {
-        return ResponseEntity.ok(spotService.postSpotRating(spotId, rating));
-    }
-    
-    @PutMapping("/{spotId}/rating")
-    public ResponseEntity<SpotResponseDTO> updateRating(
-            @PathVariable Long spotId,
-            @RequestParam Double rating) {
-        return ResponseEntity.ok(spotService.updateSpotRating(spotId, rating));
+        return ResponseEntity.ok(spotService.rateSpot(spotId, rating));
     }
     
     // Admin endpoints
-    @GetMapping("/admin/all")
-    public ResponseEntity<List<SpotResponseDTO>> getAllSpots() {
-        return ResponseEntity.ok(spotService.getAllSpots());
-    }
-    
-    @DeleteMapping("/admin/{spotId}")
-    public ResponseEntity<Void> adminDeleteSpot(@PathVariable Long spotId) {
-        spotService.deleteSpot(spotId);
-        return ResponseEntity.noContent().build();
-    }
-    
-    @GetMapping("/admin/statistics")
+    @GetMapping("/statistics")
     public ResponseEntity<SpotStatistics> getStatistics() {
         return ResponseEntity.ok(spotService.getStatistics());
     }
     
-    private Long getCurrentUserId() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(userDetails.getUsername())
-                .map(User::getId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+
+    // Not user specific endpoints
+    @GetMapping("/all")
+    public ResponseEntity<List<SpotResponseDTO>> getAllSpots() {
+        return ResponseEntity.ok(spotService.getAllSpots());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SpotResponseDTO>> searchSpots(SpotSearchCriteria criteria) {
+        return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
 }

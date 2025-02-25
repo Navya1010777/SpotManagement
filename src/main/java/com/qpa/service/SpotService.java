@@ -2,22 +2,24 @@ package com.qpa.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.qpa.dto.*;
+import com.qpa.entity.*;
+import com.qpa.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.qpa.entity.Location;
-import com.qpa.entity.Spot;
-import com.qpa.entity.SpotStatus;
-import com.qpa.entity.SpotType;
 import com.qpa.exception.ResourceNotFoundException;
 import com.qpa.repository.LocationRepository;
 import com.qpa.repository.SpotRepository;
@@ -30,14 +32,16 @@ public class SpotService {
 	private static final Logger log = LoggerFactory.getLogger(SpotService.class);
 	private final SpotRepository spotRepository;
 	private final LocationRepository locationRepository;
+	private final UserRepository userRepository;
 	
 	@Autowired
-	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository) {
+	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository, UserRepository userRepository) {
 		this.spotRepository = spotRepository;
 		this.locationRepository = locationRepository;
+		this.userRepository = userRepository;
 	}
 	
-	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, Long ownerId) {
+	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, List<MultipartFile> spotImages) {
 		Spot spot = new Spot();
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
@@ -45,12 +49,11 @@ public class SpotService {
 		spot.setHasEVCharging(spotDTO.isHasEVCharging());
 		spot.setPrice(spotDTO.getPrice());
 		spot.setPriceType(spotDTO.getPriceType());
-		spot.setAvailableDays(spotDTO.getAvailableDays());
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
-		spot.setOwner(spotDTO.getOwner());
+		spot.setOwner(userRepository.findById(getCurrentUserId()).get()); // might throw exception, needs to be handled
 
 		List<byte[]> images = new ArrayList<>();
-		for (MultipartFile file : spotDTO.getImages()) {
+		for (MultipartFile file : spotImages) {
 			try {
 				images.add(file.getBytes());
 			} catch (IOException e) {
@@ -68,7 +71,7 @@ public class SpotService {
 		return convertToDTO(spot);
 	}
 	
-	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO) {
+	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO, List<MultipartFile> spotImages) {
 		Spot spot = spotRepository.findById(spotId)
 				.orElseThrow(() -> new ResourceNotFoundException("Spot not found with id : " + spotId));
 		
@@ -77,12 +80,11 @@ public class SpotService {
 		spot.setHasEVCharging(spotDTO.isHasEVCharging());
 		spot.setPrice(spotDTO.getPrice());
 		spot.setPriceType(spotDTO.getPriceType());
-		spot.setAvailableDays(spotDTO.getAvailableDays());
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
 		
 		if (spotDTO.getImages() != null && !spotDTO.getImages().isEmpty()) {
 			List<byte[]> images = new ArrayList<>();
-			for (MultipartFile file : spotDTO.getImages()) {
+			for (MultipartFile file : spotImages) {
 				try {
 					images.add(file.getBytes());
 				} catch (IOException e) {
@@ -116,43 +118,36 @@ public class SpotService {
 	            .collect(Collectors.toList());
 	}
 	
-	public List<SpotResponseDTO> getSpotByOwner(Long ownerId) {
-		return spotRepository.findByOwnerId(ownerId).stream()
+	public List<SpotResponseDTO> getSpotByOwner() {
+		return spotRepository.findByOwnerId(getCurrentUserId()).stream()
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
 	}
-	
+
+	// Needs some work, not efficient right now.
 	public List<SpotResponseDTO> searchSpots(SpotSearchCriteria criteria) {
         // Implementation for filtering spots based on various criteria
         List<Spot> spots = spotRepository.findByLocationFilters(
-            criteria.getCity(),
-            criteria.getArea(),
-            criteria.getStreet()
+            criteria.getCity()
         );
-        
+
         return spots.stream()
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
             .filter(spot -> criteria.getHasEVCharging() == null || spot.hasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
-            .filter(spot -> criteria.getSupportedVehicleType() == null || 
+            .filter(spot -> criteria.getSupportedVehicleType() == null ||
                     spot.getSupportedVehicleTypes().contains(criteria.getSupportedVehicleType()))
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
-	public SpotResponseDTO postSpotRating(Long spotId, Double rating) {
+	public SpotResponseDTO rateSpot(Long spotId, Double rating) {
 		Spot spot = spotRepository.findById(spotId)
 				.orElseThrow(() -> new ResourceNotFoundException("Spot not found with id : " + spotId));
-		spot.setRating(rating);
-		spot = spotRepository.save(spot);
-		return convertToDTO(spot);
-	}
 
-	public SpotResponseDTO updateSpotRating(Long spotId, Double rating) {
-		Spot spot = spotRepository.findById(spotId)
-				.orElseThrow(() -> new ResourceNotFoundException("Spot not found with id : " + spotId));
 		spot.setRating(rating);
 		spot = spotRepository.save(spot);
+
 		return convertToDTO(spot);
 	}
 	
@@ -168,34 +163,10 @@ public class SpotService {
 	            .count();
 	    long unavailableSpots = totalSpots - availableSpots;
 	    
-	    // Calculate average rating
-	    double averageRating = allSpots.stream()
-	            .filter(spot -> spot.getRating() != null)
-	            .mapToDouble(Spot::getRating)
-	            .average()
-	            .orElse(0.0);
-	    
-	    // Group spots by type
-	    Map<SpotType, Long> spotsByType = allSpots.stream()
-	            .collect(Collectors.groupingBy(
-	                Spot::getSpotType,
-	                Collectors.counting()
-	            ));
-	    
-	    // Group spots by city
-	    Map<String, Long> spotsByCity = allSpots.stream()
-	            .collect(Collectors.groupingBy(
-	                spot -> spot.getLocation().getCity(),
-	                Collectors.counting()
-	            ));
-	    
 	    return new SpotStatistics(
 	        totalSpots,
 	        availableSpots,
-	        unavailableSpots,
-	        averageRating,
-	        spotsByType,
-	        spotsByCity
+	        unavailableSpots
 	    );
 	}
 
@@ -210,5 +181,12 @@ public class SpotService {
 		}
 
 		return dto;
+	}
+
+	private Long getCurrentUserId() {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userRepository.findByUsername(userDetails.getUsername())
+				.map(User::getId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 	}
 }

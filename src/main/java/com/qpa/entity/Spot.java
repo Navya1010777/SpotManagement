@@ -54,12 +54,6 @@ public class Spot {
 	@Enumerated(EnumType.STRING)
     private PriceType priceType;
     
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "spot_available_days", joinColumns = @JoinColumn(name = "spot_id"))
-    @Column(name = "day_of_week")
-    private List<DayOfWeek> availableDays;
-    
     private Double rating;
     
     private LocalDateTime createdAt;
@@ -76,7 +70,7 @@ public class Spot {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "spot_vehicle_types", joinColumns = @JoinColumn(name = "spot_id"))
     @Column(name = "vehicle_type")
-    private Set<VehicleType> supportedVehicleTypes;
+    private Set<VehicleType> supportedVehicleTypes; // no set
     
     @PrePersist
     protected void onCreate() {
@@ -94,7 +88,7 @@ public class Spot {
 	}
 
 	public Spot(Long spotId, String spotNumber, SpotType spotType, SpotStatus status, Location location,
-			boolean hasEVCharging, double price, PriceType priceType, List<DayOfWeek> availableDays, Double rating,
+			boolean hasEVCharging, double price, PriceType priceType, Double rating,
 			LocalDateTime createdAt, LocalDateTime updatedAt, List<byte[]> spotImages,
 			Set<VehicleType> supportedVehicleTypes) {
 		super();
@@ -106,7 +100,6 @@ public class Spot {
 		this.hasEVCharging = hasEVCharging;
 		this.price = price;
 		this.priceType = priceType;
-		this.availableDays = availableDays;
 		this.rating = rating;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
@@ -176,14 +169,6 @@ public class Spot {
 
 	public void setPriceType(PriceType priceType) {
 		this.priceType = priceType;
-	}
-
-	public List<DayOfWeek> getAvailableDays() {
-		return availableDays;
-	}
-
-	public void setAvailableDays(List<DayOfWeek> availableDays) {
-		this.availableDays = availableDays;
 	}
 
 	public Double getRating() {
