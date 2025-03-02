@@ -189,4 +189,26 @@ public class SpotService {
 				.map(User::getId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 	}
+	
+	
+	public List<SpotResponseDTO> getSpotsByEVCharging(boolean hasEVCharging) {
+	    List<Spot> spots = spotRepository.findByHasEVCharging(hasEVCharging);
+	    return spots.stream().map(this::convertToDTO).collect(Collectors.toList());
+	}
+	
+	public List<SpotResponseDTO> getAvailableSpotsByCityAndVehicle(String city, VehicleType vehicleType) {
+        List<Spot> spots = spotRepository.findAvailableSpotsByCityAndVehicleType(city, vehicleType);
+        return spots.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+	
+	public List<SpotResponseDTO> getAvailableSpots() {
+		List<Spot> spots = spotRepository.findByStatus(SpotStatus.AVAILABLE);
+		return spots.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+	}
+
+
 }

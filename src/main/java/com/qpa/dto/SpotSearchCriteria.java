@@ -1,6 +1,7 @@
 package com.qpa.dto;
 
 import com.qpa.entity.PriceType;
+import com.qpa.entity.SpotStatus;
 import com.qpa.entity.SpotType;
 import com.qpa.entity.VehicleType;
 
@@ -10,7 +11,9 @@ public class SpotSearchCriteria {
     private Boolean hasEVCharging;
     private PriceType priceType;
     private VehicleType supportedVehicleType;
+    private SpotStatus spotStatus;
     
+
 	public SpotSearchCriteria() {
 
 	}
@@ -64,4 +67,13 @@ public class SpotSearchCriteria {
 	public void setSupportedVehicleType(VehicleType supportedVehicleType) {
 		this.supportedVehicleType = supportedVehicleType;
 	}
+	
+	public SpotStatus getSpotStatus() {
+		return spotStatus;
+	}
+
+	public void setSpotStatus(SpotStatus spotStatus) {
+		this.spotStatus = spotStatus;
+	}
+
 }
