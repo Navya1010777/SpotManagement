@@ -2,9 +2,11 @@ package com.qpa.controller;
 
 import java.util.List;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +18,9 @@ import com.qpa.dto.SpotCreateDTO;
 import com.qpa.dto.SpotResponseDTO;
 import com.qpa.dto.SpotSearchCriteria;
 import com.qpa.dto.SpotStatistics;
+import com.qpa.entity.SpotStatus;
 import com.qpa.entity.User;
+import com.qpa.entity.VehicleType;
 import com.qpa.repository.UserRepository;
 import com.qpa.service.SpotService;
 
@@ -83,4 +87,30 @@ public class SpotController {
     public ResponseEntity<List<SpotResponseDTO>> searchSpots(SpotSearchCriteria criteria) {
         return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
+    
+    @GetMapping("/evCharging")
+    public ResponseEntity<List<SpotResponseDTO>> getSpotsByEVCharging(@RequestParam boolean hasEVCharging) {
+    	
+    	return new ResponseEntity<>(spotService.getSpotsByEVCharging(hasEVCharging), HttpStatus.OK);
+    }
+    
+    @GetMapping("/availability")
+    public ResponseEntity<List<SpotResponseDTO>> viewSpotAvailability(
+            @RequestParam String city,
+            @RequestParam VehicleType vehicleType) {
+        
+        return new ResponseEntity<>(spotService.getAvailableSpotsByCityAndVehicle(city, vehicleType), HttpStatus.OK);
+        
+    }
+    
+    @GetMapping("/availableSpots")
+    public ResponseEntity<List<SpotResponseDTO>> viewSpotAvailability() {
+    	
+    	return new ResponseEntity<>(spotService.getAvailableSpots(), HttpStatus.OK);
+    }
+    
+    
+    		
+    
+    
 }

@@ -23,10 +23,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                .csrf(csrf -> csrf.disable()) 
                 .authorizeHttpRequests(auth -> {
                     // API endpoints authorization
                     auth.requestMatchers("/api/auth/**").permitAll();
+                    auth.requestMatchers("/api/spots/evCharging").permitAll();
+                    auth.requestMatchers("/api/spots/availability").permitAll();
+                    auth.requestMatchers("api/spots/availableSpots").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/spots/statistics").hasRole("ADMIN");
                     auth.requestMatchers(HttpMethod.POST, "/api/spots/create").hasRole("SPOT_OWNER");
                     auth.requestMatchers(HttpMethod.PUT, "/api/spots/{spotId}").hasRole("SPOT_OWNER");

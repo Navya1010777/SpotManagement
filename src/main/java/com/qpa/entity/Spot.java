@@ -1,6 +1,7 @@
 package com.qpa.entity;
 
 import java.time.DayOfWeek;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -219,7 +220,4 @@ public class Spot {
 		this.owner = owner;
 	}
 
-	public boolean isHasEVCharging() {
-		return hasEVCharging;
-	}
 }
