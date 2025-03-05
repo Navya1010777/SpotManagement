@@ -1,7 +1,5 @@
 package com.qpa.entity;
 
-import java.time.DayOfWeek;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +45,8 @@ public class Spot {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
-	
+
+	@Column(columnDefinition = "BOOLEAN")  // Explicitly specify boolean storage
 	private boolean hasEVCharging;
 	
 	private double price;
@@ -148,7 +147,7 @@ public class Spot {
 		this.location = location;
 	}
 
-	public boolean hasEVCharging() {
+	public boolean getHasEVCharging() {
 		return hasEVCharging;
 	}
 
