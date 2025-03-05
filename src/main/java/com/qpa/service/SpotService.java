@@ -130,6 +130,7 @@ public class SpotService {
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
             .filter(spot -> criteria.getSupportedVehicleType() == null ||
                     spot.getSupportedVehicleTypes().contains(criteria.getSupportedVehicleType()))
+			.filter(spot -> criteria.getStatus() == null || spot.getStatus() == criteria.getStatus())
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }

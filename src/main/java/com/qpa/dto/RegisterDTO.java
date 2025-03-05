@@ -1,19 +1,20 @@
 package com.qpa.dto;
 
 import com.qpa.entity.UserRole;
+import java.util.Set;
 
 public class RegisterDTO {
     private String username;
     private String password;
-    private UserRole role;
+    private Set<UserRole> roles;
 
     public RegisterDTO() {
     }
 
-    public RegisterDTO(String username, String password, UserRole role) {
+    public RegisterDTO(String username, String password, Set<UserRole> roles) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
     }
 
     public String getUsername() {
@@ -32,11 +33,11 @@ public class RegisterDTO {
         this.password = password;
     }
 
-    public UserRole getRole() {
-        return role;
+    public Set<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
     }
 }

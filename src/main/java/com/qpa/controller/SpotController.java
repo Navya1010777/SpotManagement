@@ -88,12 +88,17 @@ public class SpotController {
         return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
 
+
+    // All these 3 methods are redundant since searching gives us all of this
+
+    // this method is redundant since in search we are giving ev charging boolean
     @GetMapping("/evCharging")
     public ResponseEntity<List<SpotResponseDTO>> getSpotsByEVCharging(
             @RequestParam boolean hasEVCharging) {
         return new ResponseEntity<>(spotService.getSpotsByEVCharging(hasEVCharging), HttpStatus.OK);
     }
 
+    // this method is also redundant since we are also giving availability while searching
     @GetMapping("/availability")
     public ResponseEntity<List<SpotResponseDTO>> viewSpotAvailability(
             @RequestParam String city,

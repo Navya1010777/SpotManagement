@@ -29,7 +29,7 @@ public class UserService {
         User user = new User(
                 registerDTO.getUsername(),
                 registerDTO.getPassword(), // Note: In a real app, you'd hash the password
-                registerDTO.getRole()
+                registerDTO.getRoles()
         );
 
         return userRepository.save(user);
