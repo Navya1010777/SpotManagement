@@ -1,6 +1,7 @@
 package com.qpa.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.qpa.exception.ResourceNotFoundException;
 import com.qpa.repository.LocationRepository;
 import com.qpa.repository.SpotRepository;
+import com.qpa.repository.*;
 
 import jakarta.transaction.Transactional;
 
@@ -33,12 +35,14 @@ public class SpotService {
 	private final SpotRepository spotRepository;
 	private final LocationRepository locationRepository;
 	private final UserRepository userRepository;
+	private final SpotBookingInfoRepository bookingRepository;
 	
 	@Autowired
-	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository, UserRepository userRepository) {
+	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository, UserRepository userRepository, SpotBookingInfoRepository bookingRepository) {
 		this.spotRepository = spotRepository;
 		this.locationRepository = locationRepository;
 		this.userRepository = userRepository;
+		this.bookingRepository = bookingRepository;
 	}
 	
 	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, List<MultipartFile> spotImages) {
@@ -209,6 +213,34 @@ public class SpotService {
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
 	}
+	
+	public SpotResponseDTO getSpotByBookingId(long bookingId) {
+        Spot spot = bookingRepository.findSpotByBookingId(bookingId);
+        if (spot == null) {
+            throw new RuntimeException("No spot found for booking ID: " + bookingId);
+        }
+        return convertToDTO(spot);
+    }
+	
+	public List<SpotResponseDTO> getBookedSpots() {
+        List<Spot> bookedSpots = bookingRepository.findBookedSpots();
+        if (bookedSpots.isEmpty()) {
+            throw new RuntimeException("No booked spots found.");
+        }
+        return bookedSpots.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+    }
+	
+	public List<SpotResponseDTO> getAvailableSpotsByStartAndEndDate(LocalDate startDate, LocalDate endDate) {
+        List<Spot> bookedSpots = bookingRepository.findSpotsByStartAndEndDate(startDate, endDate);
+        if (bookedSpots.isEmpty()) {
+            throw new RuntimeException("No booked spots found between "+ startDate + " and " + endDate);
+        }
+        return bookedSpots.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+    }
 
 
 }

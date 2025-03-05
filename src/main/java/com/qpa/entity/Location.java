@@ -1,11 +1,14 @@
 package com.qpa.entity;
 
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "locations")
@@ -20,7 +23,10 @@ public class Location {
 	private String buildingName;
 	private String streetAddress;
 	private String area;
+	
+	//@NotBlank(message = "City is required")
 	private String city;
+	
 	private String state;
 	private String pincode;
 	private String landmark;

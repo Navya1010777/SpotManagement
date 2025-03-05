@@ -1,5 +1,6 @@
 package com.qpa.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,16 +26,21 @@ import com.qpa.entity.VehicleType;
 import com.qpa.repository.UserRepository;
 import com.qpa.service.SpotService;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
+//@Validated
 @RestController
 @RequestMapping("/api/spots")
 public class SpotController {
 
     private final SpotService spotService;
-    
+
     @Autowired
     public SpotController(SpotService spotService) {
         this.spotService = spotService;
     }
+
 
     // Spot Owner endpoints
     @PostMapping("/create")
@@ -88,14 +95,15 @@ public class SpotController {
         return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
     
-    @GetMapping("/evCharging")
-    public ResponseEntity<List<SpotResponseDTO>> getSpotsByEVCharging(@RequestParam boolean hasEVCharging) {
+    @GetMapping("/ev-charging")
+    public ResponseEntity<List<SpotResponseDTO>> getSpotsByEVCharging( @RequestParam boolean hasEVCharging) {
     	
     	return new ResponseEntity<>(spotService.getSpotsByEVCharging(hasEVCharging), HttpStatus.OK);
     }
     
     @GetMapping("/availability")
-    public ResponseEntity<List<SpotResponseDTO>> viewSpotAvailability(
+    public ResponseEntity<List<SpotResponseDTO>> getAvailableSpotsByCityAndVehicle(
+    		//@NotBlank(message = "City is required")
             @RequestParam String city,
             @RequestParam VehicleType vehicleType) {
         
@@ -104,13 +112,37 @@ public class SpotController {
     }
     
     @GetMapping("/availableSpots")
-    public ResponseEntity<List<SpotResponseDTO>> viewSpotAvailability() {
+    public ResponseEntity<List<SpotResponseDTO>> getAvailableSpots() {
     	
     	return new ResponseEntity<>(spotService.getAvailableSpots(), HttpStatus.OK);
     }
     
     
-    		
+    @GetMapping("/by-booking/{bookingId}")
+    public ResponseEntity<SpotResponseDTO> getSpotByBookingId(@PathVariable long bookingId) {
+         
+        return new ResponseEntity<>(spotService.getSpotByBookingId(bookingId), HttpStatus.OK);
+
+    }
+    
+    @GetMapping("/booked")
+    public ResponseEntity<List<SpotResponseDTO>> getBookedSpots() {
+
+        return new ResponseEntity<>(spotService.getBookedSpots(), HttpStatus.OK);
+
+    }
+    
+    @GetMapping("/by-booking")
+    public ResponseEntity<List<SpotResponseDTO>> getBookedSpotsByStartAndEndDate(
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        return new ResponseEntity<>(spotService.getAvailableSpotsByStartAndEndDate(startDate, endDate), HttpStatus.OK);
+
+    }
     
     
 }
