@@ -5,7 +5,6 @@ import com.qpa.entity.SpotType;
 import com.qpa.entity.User;
 import com.qpa.entity.VehicleType;
 
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Set;
 
@@ -62,7 +61,7 @@ public class SpotCreateDTO {
 		this.location = location;
 	}
 
-	public boolean isHasEVCharging() {
+	public boolean getHasEVCharging() {
 		return hasEVCharging;
 	}
 

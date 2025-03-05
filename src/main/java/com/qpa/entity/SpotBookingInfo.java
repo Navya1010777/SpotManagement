@@ -8,7 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+
 
 @Entity
 @Table(name = "spot_booking_info") // Explicitly defining the table name
@@ -18,7 +18,7 @@ public class SpotBookingInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
     
-    @NotBlank
+
     private LocalDate bookingDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

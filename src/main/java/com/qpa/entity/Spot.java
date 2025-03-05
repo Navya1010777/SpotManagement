@@ -1,7 +1,5 @@
 package com.qpa.entity;
 
-import java.time.DayOfWeek;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -23,8 +21,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+
 
 @Entity
 @Table(name = "spots")
@@ -50,9 +47,9 @@ public class Spot {
 	@JoinColumn(name = "location_id", nullable = false)
 	//@Valid
 	private Location location;
-	
-	
-	@NotBlank(message="Please select ev recharge option")
+
+
+	@Column(columnDefinition = "BOOLEAN")  // Explicitly specify boolean storage
 	private boolean hasEVCharging;
 	
 	private double price;
@@ -153,7 +150,7 @@ public class Spot {
 		this.location = location;
 	}
 
-	public boolean hasEVCharging() {
+	public boolean getHasEVCharging() {
 		return hasEVCharging;
 	}
 
