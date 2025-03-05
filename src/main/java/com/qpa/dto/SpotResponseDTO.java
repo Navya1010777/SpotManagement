@@ -1,6 +1,5 @@
 package com.qpa.dto;
 
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Set;
 
@@ -83,7 +82,7 @@ public class SpotResponseDTO {
 		this.location = location;
 	}
 
-	public boolean isHasEVCharging() {
+	public boolean getHasEVCharging() {
 		return hasEVCharging;
 	}
 

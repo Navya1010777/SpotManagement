@@ -2,22 +2,15 @@ package com.qpa.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.qpa.dto.*;
 import com.qpa.entity.*;
 import com.qpa.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.qpa.exception.ResourceNotFoundException;
@@ -29,7 +22,6 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class SpotService {
-	private static final Logger log = LoggerFactory.getLogger(SpotService.class);
 	private final SpotRepository spotRepository;
 	private final LocationRepository locationRepository;
 	private final UserRepository userRepository;
@@ -41,16 +33,17 @@ public class SpotService {
 		this.userRepository = userRepository;
 	}
 	
-	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, List<MultipartFile> spotImages) {
+	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, List<MultipartFile> spotImages, Long userId) {
 		Spot spot = new Spot();
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
 		spot.setStatus(SpotStatus.AVAILABLE);
-		spot.setHasEVCharging(spotDTO.isHasEVCharging());
+		spot.setHasEVCharging(spotDTO.getHasEVCharging());
 		spot.setPrice(spotDTO.getPrice());
 		spot.setPriceType(spotDTO.getPriceType());
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
-		spot.setOwner(userRepository.findById(getCurrentUserId()).get()); // might throw exception, needs to be handled
+		spot.setOwner(userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId)));
 
 		List<byte[]> images = new ArrayList<>();
 		for (MultipartFile file : spotImages) {
@@ -77,7 +70,7 @@ public class SpotService {
 		
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
-		spot.setHasEVCharging(spotDTO.isHasEVCharging());
+		spot.setHasEVCharging(spotDTO.getHasEVCharging());
 		spot.setPrice(spotDTO.getPrice());
 		spot.setPriceType(spotDTO.getPriceType());
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
@@ -117,9 +110,9 @@ public class SpotService {
 	            .map(this::convertToDTO)
 	            .collect(Collectors.toList());
 	}
-	
-	public List<SpotResponseDTO> getSpotByOwner() {
-		return spotRepository.findByOwnerId(getCurrentUserId()).stream()
+
+	public List<SpotResponseDTO> getSpotByOwner(Long userId) {
+		return spotRepository.findByOwnerId(userId).stream()
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
 	}
@@ -133,7 +126,7 @@ public class SpotService {
 
         return spots.stream()
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
-            .filter(spot -> criteria.getHasEVCharging() == null || spot.hasEVCharging() == criteria.getHasEVCharging())
+            .filter(spot -> criteria.getHasEVCharging() == null || spot.getHasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
             .filter(spot -> criteria.getSupportedVehicleType() == null ||
                     spot.getSupportedVehicleTypes().contains(criteria.getSupportedVehicleType()))
@@ -183,14 +176,6 @@ public class SpotService {
 		return dto;
 	}
 
-	private Long getCurrentUserId() {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return userRepository.findByUsername(userDetails.getUsername())
-				.map(User::getId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-	}
-	
-	
 	public List<SpotResponseDTO> getSpotsByEVCharging(boolean hasEVCharging) {
 	    List<Spot> spots = spotRepository.findByHasEVCharging(hasEVCharging);
 	    return spots.stream().map(this::convertToDTO).collect(Collectors.toList());
