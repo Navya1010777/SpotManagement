@@ -22,6 +22,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name = "spots")
 public class Spot {
@@ -44,7 +45,9 @@ public class Spot {
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "location_id", nullable = false)
+	//@Valid
 	private Location location;
+
 
 	@Column(columnDefinition = "BOOLEAN")  // Explicitly specify boolean storage
 	private boolean hasEVCharging;
