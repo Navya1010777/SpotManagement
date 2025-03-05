@@ -128,7 +128,7 @@ public class SpotService {
             criteria.getCity()
         );
 
-        return spots.stream()
+        List<SpotResponseDTO> filteredSpots =  spots.stream()
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
             .filter(spot -> criteria.getHasEVCharging() == null || spot.getHasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
@@ -137,6 +137,8 @@ public class SpotService {
 			.filter(spot -> criteria.getStatus() == null || spot.getStatus() == criteria.getStatus())
             .map(this::convertToDTO)
             .collect(Collectors.toList());
+
+		return filteredSpots;
     }
 
 	public SpotResponseDTO rateSpot(Long spotId, Double rating) {
