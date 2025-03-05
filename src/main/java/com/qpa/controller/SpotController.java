@@ -17,7 +17,6 @@ import com.qpa.dto.SpotCreateDTO;
 import com.qpa.dto.SpotResponseDTO;
 import com.qpa.dto.SpotSearchCriteria;
 import com.qpa.dto.SpotStatistics;
-import com.qpa.entity.SpotStatus;
 import com.qpa.entity.VehicleType;
 import com.qpa.service.SpotService;
 
@@ -96,7 +95,7 @@ public class SpotController {
         return ResponseEntity.ok(spotService.searchSpots(criteria));
     }
 
-
+    // redundant
     @GetMapping("/evCharging")
     public ResponseEntity<List<SpotResponseDTO>> getSpotsByEVCharging(
             @RequestParam boolean hasEVCharging) {
@@ -104,6 +103,7 @@ public class SpotController {
 
     }
 
+    // redundant
     @GetMapping("/availability")
     public ResponseEntity<List<SpotResponseDTO>> getAvailableSpotsByCityAndVehicle(
     		//@NotBlank(message = "City is required")
@@ -112,10 +112,9 @@ public class SpotController {
         return new ResponseEntity<>(spotService.getAvailableSpotsByCityAndVehicle(city, vehicleType), HttpStatus.OK);
     }
 
+    // redundant
     @GetMapping("/availableSpots")
-
     public ResponseEntity<List<SpotResponseDTO>> getAvailableSpots() {
-    	
     	return new ResponseEntity<>(spotService.getAvailableSpots(), HttpStatus.OK);
     }
     
@@ -145,7 +144,4 @@ public class SpotController {
         return new ResponseEntity<>(spotService.getAvailableSpotsByStartAndEndDate(startDate, endDate), HttpStatus.OK);
 
     }
-    
-    
 }
-
