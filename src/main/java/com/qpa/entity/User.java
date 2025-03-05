@@ -3,6 +3,7 @@ package com.qpa.entity;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -18,7 +19,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private Set<UserRole> roles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Spot> spots = new ArrayList<>();
@@ -26,10 +27,10 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String username, String password, UserRole role) {
+    public User(String username, String password, Set<UserRole> role) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roles = role;
     }
 
     // Getters and Setters
@@ -57,12 +58,12 @@ public class User {
         this.password = password;
     }
 
-    public UserRole getRole() {
-        return role;
+    public Set<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
     }
 
     public List<Spot> getSpots() {

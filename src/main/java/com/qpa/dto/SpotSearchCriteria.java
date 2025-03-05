@@ -11,21 +11,21 @@ public class SpotSearchCriteria {
     private Boolean hasEVCharging;
     private PriceType priceType;
     private VehicleType supportedVehicleType;
-    private SpotStatus spotStatus;
-    
+    private SpotStatus status;
 
 	public SpotSearchCriteria() {
 
 	}
 
-	public SpotSearchCriteria(String city, String area, String street, SpotType spotType, Boolean hasEVCharging,
-			PriceType priceType, VehicleType supportedVehicleType) {
+	public SpotSearchCriteria(String city, SpotType spotType, Boolean hasEVCharging,
+			PriceType priceType, VehicleType supportedVehicleType, SpotStatus status) {
 		super();
 		this.city = city;
 		this.spotType = spotType;
 		this.hasEVCharging = hasEVCharging;
 		this.priceType = priceType;
 		this.supportedVehicleType = supportedVehicleType;
+		this.status = status;
 	}
 
 	public String getCity() {
@@ -68,12 +68,12 @@ public class SpotSearchCriteria {
 		this.supportedVehicleType = supportedVehicleType;
 	}
 	
-	public SpotStatus getSpotStatus() {
-		return spotStatus;
+	public SpotStatus getStatus() {
+		return status;
 	}
 
-	public void setSpotStatus(SpotStatus spotStatus) {
-		this.spotStatus = spotStatus;
+	public void setStatus(SpotStatus status) {
+		this.status = status;
 	}
 
 }
