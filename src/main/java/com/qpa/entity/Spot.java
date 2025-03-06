@@ -37,7 +37,7 @@ public class Spot {
 	
 	@ManyToOne
 	@JoinColumn(name = "owner_id", nullable = false)
-	@JsonBackReference(value = "spots")
+	@JsonBackReference
 	private User owner;
 
 	@Enumerated(EnumType.STRING)
@@ -48,7 +48,7 @@ public class Spot {
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "location_id", nullable = false)
-	@JsonManagedReference(value = "spot")
+	@JsonManagedReference
 	private Location location;
 
 	@Column(columnDefinition = "BOOLEAN")  // Explicitly specify boolean storage

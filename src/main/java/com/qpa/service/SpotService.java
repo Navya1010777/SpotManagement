@@ -69,7 +69,7 @@ public class SpotService {
 		return convertToDTO(spot);
 	}
 	
-	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO, List<MultipartFile> spotImages) throws InvalidEntityException{
+	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO, List<MultipartFile> spotImages) throws InvalidEntityException {
 		Spot spot = spotRepository.findById(spotId)
 				.orElseThrow(() -> new InvalidEntityException("Spot not found with id : " + spotId));
 		
