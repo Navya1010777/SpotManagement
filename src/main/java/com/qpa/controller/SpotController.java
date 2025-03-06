@@ -18,7 +18,10 @@ import com.qpa.dto.SpotResponseDTO;
 import com.qpa.dto.SpotSearchCriteria;
 import com.qpa.dto.SpotStatistics;
 import com.qpa.entity.VehicleType;
+import com.qpa.exception.InvalidEntityException;
 import com.qpa.service.SpotService;
+
+import jakarta.validation.Valid;
 
 
 
@@ -37,7 +40,7 @@ public class SpotController {
 
     @PostMapping("/create")
     public ResponseEntity<SpotResponseDTO> createSpot(
-            @RequestPart("spot") SpotCreateDTO spotDTO,
+            @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @RequestParam Long userId) {
         List<MultipartFile> imageList = (images != null) ? images : Collections.emptyList();
@@ -47,7 +50,7 @@ public class SpotController {
     @PutMapping("/{spotId}")
     public ResponseEntity<SpotResponseDTO> updateSpot(
             @PathVariable Long spotId,
-            @RequestPart("spot") SpotCreateDTO spotDTO,
+            @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @RequestParam Long userId) {
         // If needed, you can add a check to ensure the user owns the spot
@@ -120,7 +123,7 @@ public class SpotController {
     
     
     @GetMapping("/by-booking/{bookingId}")
-    public ResponseEntity<SpotResponseDTO> getSpotByBookingId(@PathVariable long bookingId) {
+    public ResponseEntity<SpotResponseDTO> getSpotByBookingId(@PathVariable long bookingId) throws InvalidEntityException{
          
         return new ResponseEntity<>(spotService.getSpotByBookingId(bookingId), HttpStatus.OK);
 
