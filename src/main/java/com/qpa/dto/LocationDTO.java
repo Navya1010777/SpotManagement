@@ -9,15 +9,40 @@ import jakarta.validation.constraints.Size;
 
 
 public class LocationDTO {
+	
+
 	private double latitude;
+	
+
 	private double longitude;
+	
+
 	private String buildingName;
+	
+	@NotBlank(message = "Street address cannot be blank")
+    @Size(max = 200, message = "Street address must be less than 200 characters")
 	private String streetAddress;
+	
+
 	private String area;
+	
+	@NotBlank(message = "City cannot be blank")
 	private String city;
+	
+	@NotBlank(message = "State cannot be blank")
+    @Size(max = 50, message = "State must be less than 50 characters")
 	private String state;
+	
+	
+	@NotBlank(message = "Pincode cannot be blank")
+    @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Invalid pincode format")
 	private String pincode;
+	
+
 	private String landmark;
+	
+	
+
 	private int floorNumber;
 	
 	public LocationDTO() {

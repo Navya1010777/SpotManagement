@@ -18,14 +18,33 @@ import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
 
 public class SpotCreateDTO {
+
+	@NotBlank(message = "Spot number is required")
+    @Pattern(regexp = "^[A-Z0-9]{3,10}$", 
+             message = "Spot number must be alphanumeric, 3-10 characters long")
 	private String spotNumber;
+	
+	@NotNull(message = "Spot type is required")
 	private SpotType spotType;
+	
 	private User owner;
+
+	@Valid
+	@NotNull(message = "Location details are required")
 	private LocationDTO location;
+	
 	private boolean hasEVCharging;
+
+	@NotNull(message = "Price is required")
+	@Min(value = 0, message = "Price must be non-negative")
 	private double price;
+
+	@NotNull(message = "Price type is required")
 	private PriceType priceType;
+	
 	private List<MultipartFile> images;
+
+	@NotEmpty(message = "At least one supported vehicle type is required")
 	private Set<VehicleType> supportedVehicle;
 	
 	public SpotCreateDTO() {
