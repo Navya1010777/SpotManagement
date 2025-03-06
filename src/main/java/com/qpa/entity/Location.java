@@ -2,6 +2,7 @@ package com.qpa.entity;
 
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +35,7 @@ public class Location {
 	private int floorNumber;
 	
 	@OneToOne(mappedBy = "location")
+	@JsonBackReference(value = "location")
 	private Spot spot;
 
 	public Location(Long locationId, double latitude, double longitude, String buildingName, String streetAddress,

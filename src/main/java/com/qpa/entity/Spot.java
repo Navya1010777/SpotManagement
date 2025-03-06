@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -35,6 +37,7 @@ public class Spot {
 	
 	@ManyToOne
 	@JoinColumn(name = "owner_id", nullable = false)
+	@JsonBackReference(value = "spots")
 	private User owner;
 
 	@Enumerated(EnumType.STRING)
@@ -45,9 +48,8 @@ public class Spot {
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "location_id", nullable = false)
-	//@Valid
+	@JsonManagedReference(value = "spot")
 	private Location location;
-
 
 	@Column(columnDefinition = "BOOLEAN")  // Explicitly specify boolean storage
 	private boolean hasEVCharging;

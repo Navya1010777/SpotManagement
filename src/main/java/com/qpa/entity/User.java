@@ -1,5 +1,6 @@
 package com.qpa.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class User {
     private Set<UserRole> roles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "owner")
     private List<Spot> spots = new ArrayList<>();
 
     // Constructors
