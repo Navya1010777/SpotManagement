@@ -40,7 +40,7 @@ public class SpotController {
 
     @PostMapping("/create")
     public ResponseEntity<SpotResponseDTO> createSpot(
-            @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
+            @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @RequestParam Long userId) {
         List<MultipartFile> imageList = (images != null) ? images : Collections.emptyList();
@@ -50,7 +50,7 @@ public class SpotController {
     @PutMapping("/{spotId}")
     public ResponseEntity<SpotResponseDTO> updateSpot(
             @PathVariable Long spotId,
-            @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
+            @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @RequestParam Long userId) throws InvalidEntityException {
         // If needed, you can add a check to ensure the user owns the spot

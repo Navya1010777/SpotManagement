@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 
 
 public class LocationDTO {
+<<<<<<< Updated upstream
 	private double latitude;
 	private double longitude;
 	private String buildingName;
@@ -18,6 +19,36 @@ public class LocationDTO {
 	private String state;
 	private String pincode;
 	private String landmark;
+=======
+	
+
+	private double latitude;
+	
+
+	private double longitude;
+	
+
+	private String buildingName;
+	
+
+	private String streetAddress;
+	
+
+	private String area;
+	
+
+	private String city;
+	
+
+	private String state;
+
+	private String pincode;
+	
+
+	private String landmark;
+	
+	
+>>>>>>> Stashed changes
 	private int floorNumber;
 	
 	public LocationDTO() {

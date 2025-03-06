@@ -18,14 +18,41 @@ import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
 
 public class SpotCreateDTO {
+<<<<<<< Updated upstream
 	private String spotNumber;
 	private SpotType spotType;
 	private User owner;
+=======
+	
+	
+	private String spotNumber;
+	
+
+	private SpotType spotType;
+	
+
+	private User owner;
+	
+
+>>>>>>> Stashed changes
 	private LocationDTO location;
 	private boolean hasEVCharging;
+<<<<<<< Updated upstream
 	private double price;
+=======
+	
+
+	private double price;
+	
+
+>>>>>>> Stashed changes
 	private PriceType priceType;
 	private List<MultipartFile> images;
+<<<<<<< Updated upstream
+=======
+	
+
+>>>>>>> Stashed changes
 	private Set<VehicleType> supportedVehicle;
 	
 	public SpotCreateDTO() {
