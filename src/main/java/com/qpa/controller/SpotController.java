@@ -52,7 +52,7 @@ public class SpotController {
             @PathVariable Long spotId,
             @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam Long userId) {
+            @RequestParam Long userId) throws InvalidEntityException{
         // If needed, you can add a check to ensure the user owns the spot
         return ResponseEntity.ok(spotService.updateSpot(spotId, spotDTO, images));
     }
