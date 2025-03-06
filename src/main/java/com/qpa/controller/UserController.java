@@ -29,4 +29,9 @@ public class UserController {
         User loggedInUser = userService.loginUser(loginDTO);
         return ResponseEntity.ok(loggedInUser);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserById(userId));
+    }
 }
