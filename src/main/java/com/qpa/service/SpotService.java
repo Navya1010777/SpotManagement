@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.qpa.exception.InvalidEntityException;
 import com.qpa.exception.ResourceNotFoundException;
 import com.qpa.repository.LocationRepository;
 import com.qpa.repository.SpotRepository;
@@ -202,10 +203,10 @@ public class SpotService {
 				.collect(Collectors.toList());
 	}
 	
-	public SpotResponseDTO getSpotByBookingId(long bookingId) {
+	public SpotResponseDTO getSpotByBookingId(long bookingId) throws InvalidEntityException{
         Spot spot = bookingRepository.findSpotByBookingId(bookingId);
         if (spot == null) {
-            throw new RuntimeException("No spot found for booking ID: " + bookingId);
+            throw new InvalidEntityException("No spot found for booking ID: " + bookingId);
         }
         return convertToDTO(spot);
     }

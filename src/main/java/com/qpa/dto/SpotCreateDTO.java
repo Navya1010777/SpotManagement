@@ -5,20 +5,51 @@ import com.qpa.entity.SpotType;
 import com.qpa.entity.User;
 import com.qpa.entity.VehicleType;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
 public class SpotCreateDTO {
+	
+	@NotBlank(message = "Spot number is required")
+    @Pattern(regexp = "^[A-Z0-9]{3,10}$", 
+             message = "Spot number must be alphanumeric, 3-10 characters long")
 	private String spotNumber;
+	
+	@NotNull(message = "Spot type is required")
 	private SpotType spotType;
+	
+	//@NotNull(message = "Owner information is required")
 	private User owner;
+	
+	@Valid
+	@NotNull(message = "Location details are required")
 	private LocationDTO location;
+	
+	 
 	private boolean hasEVCharging;
+	
+	@NotNull(message = "Price is required")
+	@Min(value = 0, message = "Price must be non-negative")
+	 //   @Max(value = 10000, message = "Price cannot exceed 10,000")
+	 //   @Digits(integer = 6, fraction = 2, message = "Price can have up to 6 digits with 2 decimal places")
 	private double price;
+	
+	@NotNull(message = "Price type is required")
 	private PriceType priceType;
+	 
+	 
 	private List<MultipartFile> images;
+	
+	@NotEmpty(message = "At least one supported vehicle type is required")
 	private Set<VehicleType> supportedVehicle;
 	
 	public SpotCreateDTO() {
