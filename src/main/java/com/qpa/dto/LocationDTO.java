@@ -9,40 +9,15 @@ import jakarta.validation.constraints.Size;
 
 
 public class LocationDTO {
-	
-	@NotNull(message = "Latitude is required")
 	private double latitude;
-	
-	@NotNull(message = "Longitute is required")
 	private double longitude;
-	
-	@Size(max = 100, message = "Building name must be less than 100 characters")
 	private String buildingName;
-	
-	@NotBlank(message = "Street address cannot be blank")
-    @Size(max = 200, message = "Street address must be less than 200 characters")
 	private String streetAddress;
-	
-	@Size(max = 100, message = "Area must be less than 100 characters")
 	private String area;
-	
-	@NotBlank(message = "City cannot be blank")
-	@Size(max = 50, message = "City must be less than 50 characters")
 	private String city;
-	
-	@NotBlank(message = "State cannot be blank")
-    @Size(max = 50, message = "State must be less than 50 characters")
 	private String state;
-	
-	@NotBlank(message = "Pincode cannot be blank")
-    @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Invalid pincode format")
 	private String pincode;
-	
-	@Size(max = 200, message = "Landmark must be less than 200 characters")
 	private String landmark;
-	
-	@Min(value = -5, message = "Floor number must be greater than or equal to -5")
-    @Max(value = 200, message = "Floor number must be less than or equal to 200")
 	private int floorNumber;
 	
 	public LocationDTO() {
