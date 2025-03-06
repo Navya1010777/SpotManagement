@@ -40,7 +40,7 @@ public class SpotController {
 
     @PostMapping("/create")
     public ResponseEntity<SpotResponseDTO> createSpot(
-            @RequestPart("spot") SpotCreateDTO spotDTO,
+            @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @RequestParam Long userId) {
         List<MultipartFile> imageList = (images != null) ? images : Collections.emptyList();
