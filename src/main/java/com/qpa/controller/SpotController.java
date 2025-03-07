@@ -1,6 +1,7 @@
 package com.qpa.controller;
 
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 
@@ -41,20 +42,19 @@ public class SpotController {
     @PostMapping("/create")
     public ResponseEntity<SpotResponseDTO> createSpot(
             @Valid @RequestPart("spot") SpotCreateDTO spotDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam Long userId) {
-        List<MultipartFile> imageList = (images != null) ? images : Collections.emptyList();
-        return ResponseEntity.ok(spotService.createSpot(spotDTO, images, userId));
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestParam Long userId) throws IOException {
+        return ResponseEntity.ok(spotService.createSpot(spotDTO, image, userId));
     }
 
     @PutMapping("/{spotId}")
     public ResponseEntity<SpotResponseDTO> updateSpot(
             @PathVariable Long spotId,
             @RequestPart("spot") SpotCreateDTO spotDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam Long userId) throws InvalidEntityException {
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestParam Long userId) throws InvalidEntityException, IOException {
         // If needed, you can add a check to ensure the user owns the spot
-        return ResponseEntity.ok(spotService.updateSpot(spotId, spotDTO, images));
+        return ResponseEntity.ok(spotService.updateSpot(spotId, spotDTO, image));
     }
 
     @DeleteMapping("/{spotId}")
@@ -70,6 +70,16 @@ public class SpotController {
     public ResponseEntity<List<SpotResponseDTO>> getOwnerSpots(
             @RequestParam Long userId) {
         return ResponseEntity.ok(spotService.getSpotByOwner(userId));
+    }
+
+    @GetMapping("/{spotId}")
+    public ResponseEntity<SpotResponseDTO> getSpotById(@PathVariable Long spotId) {
+        return ResponseEntity.ok(spotService.getSpot(spotId));
+    }
+
+    @PatchMapping("/{spotId}")
+    public ResponseEntity<SpotResponseDTO> toggleSpotActivation(@PathVariable Long spotId) {
+        return ResponseEntity.ok(spotService.toggleSpotActivation(spotId));
     }
 
     // Vehicle Owner endpoints

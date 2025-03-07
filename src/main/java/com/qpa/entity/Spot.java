@@ -45,13 +45,16 @@ public class Spot {
 	
 	@Enumerated(EnumType.STRING)
 	private SpotStatus status;
+
+	@Column(columnDefinition = "BOOLEAN")
+	private boolean isActive = true;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "location_id", nullable = false)
 	@JsonManagedReference
 	private Location location;
 
-	@Column(columnDefinition = "BOOLEAN")  // Explicitly specify boolean storage
+	@Column(columnDefinition = "BOOLEAN")
 	private boolean hasEVCharging;
 	
 	private double price;
@@ -64,12 +67,10 @@ public class Spot {
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
-    
-    @Lob
-    @ElementCollection
-    @CollectionTable(name = "spot_images", joinColumns = @JoinColumn(name = "spot_id"))
-    @Column(name = "image_data", columnDefinition = "LONGBLOB")
-    private List<byte[]> spotImages;
+
+	@Lob
+	@Column(name = "image_data", columnDefinition = "LONGBLOB")
+	private byte[] spotImage;
     
     @ElementCollection
     @Enumerated(EnumType.STRING)
@@ -92,15 +93,13 @@ public class Spot {
 
 	}
 
-	public Spot(Long spotId, String spotNumber, SpotType spotType, SpotStatus status, Location location,
-			boolean hasEVCharging, double price, PriceType priceType, Double rating,
-			LocalDateTime createdAt, LocalDateTime updatedAt, List<byte[]> spotImages,
-			Set<VehicleType> supportedVehicleTypes) {
-		super();
+	public Spot(Long spotId, String spotNumber, User owner, SpotType spotType, SpotStatus status, boolean isActive, Location location, boolean hasEVCharging, double price, PriceType priceType, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, byte[] spotImage, Set<VehicleType> supportedVehicleTypes) {
 		this.spotId = spotId;
 		this.spotNumber = spotNumber;
+		this.owner = owner;
 		this.spotType = spotType;
 		this.status = status;
+		this.isActive = isActive;
 		this.location = location;
 		this.hasEVCharging = hasEVCharging;
 		this.price = price;
@@ -108,7 +107,7 @@ public class Spot {
 		this.rating = rating;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
-		this.spotImages = spotImages;
+		this.spotImage = spotImage;
 		this.supportedVehicleTypes = supportedVehicleTypes;
 	}
 
@@ -191,13 +190,13 @@ public class Spot {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	
-	public List<byte[]> getSpotImages() {
-		return spotImages;
+
+	public byte[] getSpotImage() {
+		return spotImage;
 	}
 
-	public void setSpotImages(List<byte[]> spotImages) {
-		this.spotImages = spotImages;
+	public void setSpotImage(byte[] spotImage) {
+		this.spotImage = spotImage;
 	}
 
 	public LocalDateTime getUpdatedAt() {
@@ -224,4 +223,11 @@ public class Spot {
 		this.owner = owner;
 	}
 
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean active) {
+		isActive = active;
+	}
 }

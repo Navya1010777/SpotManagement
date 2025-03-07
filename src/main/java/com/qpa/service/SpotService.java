@@ -38,7 +38,7 @@ public class SpotService {
 		this.bookingRepository = bookingRepository;
 	}
 	
-	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, List<MultipartFile> spotImages, Long userId) {
+	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, MultipartFile spotImage, Long userId) throws IOException {
 		Spot spot = new Spot();
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
@@ -50,15 +50,7 @@ public class SpotService {
 		spot.setOwner(userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId)));
 
-		List<byte[]> images = new ArrayList<>();
-		for (MultipartFile file : spotImages) {
-			try {
-				images.add(file.getBytes());
-			} catch (IOException e) {
-				throw new RuntimeException("Failed to process image", e);
-			}
-		}
-		spot.setSpotImages(images);
+		spot.setSpotImage(spotImage.getBytes());
 		
 		Location location = new Location();
 		BeanUtils.copyProperties(spotDTO.getLocation(), location);
@@ -68,37 +60,30 @@ public class SpotService {
 		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
 	}
-	
-	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO, List<MultipartFile> spotImages) throws InvalidEntityException {
+
+	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO, MultipartFile spotImage) throws InvalidEntityException, IOException {
 		Spot spot = spotRepository.findById(spotId)
 				.orElseThrow(() -> new InvalidEntityException("Spot not found with id : " + spotId));
-		
+
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
 		spot.setHasEVCharging(spotDTO.getHasEVCharging());
 		spot.setPrice(spotDTO.getPrice());
 		spot.setPriceType(spotDTO.getPriceType());
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
-		
-		if (spotDTO.getImages() != null && !spotDTO.getImages().isEmpty()) {
-			List<byte[]> images = new ArrayList<>();
-			for (MultipartFile file : spotImages) {
-				try {
-					images.add(file.getBytes());
-				} catch (IOException e) {
-					throw new RuntimeException("Failed to process image", e);
-				}
-			}
-			spot.setSpotImages(images);
+		spot.setStatus(spotDTO.getStatus());
+
+		if (spotImage != null && !spotImage.isEmpty()) {
+			spot.setSpotImage(spotImage.getBytes());
 		}
-		
+
 		Location location = spot.getLocation();
 		BeanUtils.copyProperties(spotDTO.getLocation(), location);
 		locationRepository.save(location);
-		
+
 		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
-	} 
+	}
 	
 	public void deleteSpot(Long spotId) {
 		spotRepository.deleteById(spotId);
@@ -232,4 +217,11 @@ public class SpotService {
     }
 
 
+	public SpotResponseDTO toggleSpotActivation(Long spotId) {
+		Spot spot = spotRepository.findById(spotId)
+				.orElseThrow(() -> new ResourceNotFoundException("Spot not found with id : " + spotId));
+		spot.setIsActive(!spot.getIsActive());
+		spot = spotRepository.save(spot);
+		return convertToDTO(spot);
+	}
 }

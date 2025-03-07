@@ -3,42 +3,40 @@ package com.qpa.dto;
 import java.util.List;
 import java.util.Set;
 
-import com.qpa.entity.PriceType;
-import com.qpa.entity.SpotStatus;
-import com.qpa.entity.SpotType;
-import com.qpa.entity.VehicleType;
+import com.qpa.entity.*;
 
 public class SpotResponseDTO {
 	private Long spotId;
 	private String spotNumber;
 	private SpotType spotType;
 	private SpotStatus status;
+	private boolean isActive;
 	private LocationDTO location;
+	private User owner;
 	private boolean hasEVCharging;
 	private double price;
 	private PriceType priceType;
 	private Double rating;
-	private List<byte[]> spotImages;
+	private byte[] spotImage;
 	private Set<VehicleType> supportedVehicleTypes;
 	
 	public SpotResponseDTO() {
 
 	}
 
-	public SpotResponseDTO(Long spotId, String spotNumber, SpotType spotType, SpotStatus status, LocationDTO location,
-			boolean hasEVCharging, double price, PriceType priceType, Double rating,
-			List<byte[]> spotImages, Set<VehicleType> supportedVehicleTypes) {
-		super();
+	public SpotResponseDTO(Long spotId, String spotNumber, SpotType spotType, SpotStatus status, boolean isActive, LocationDTO location, User owner, boolean hasEVCharging, double price, PriceType priceType, Double rating, byte[] spotImage, Set<VehicleType> supportedVehicleTypes) {
 		this.spotId = spotId;
 		this.spotNumber = spotNumber;
 		this.spotType = spotType;
 		this.status = status;
+		this.isActive = isActive;
 		this.location = location;
+		this.owner = owner;
 		this.hasEVCharging = hasEVCharging;
 		this.price = price;
 		this.priceType = priceType;
 		this.rating = rating;
-		this.spotImages = spotImages;
+		this.spotImage = spotImage;
 		this.supportedVehicleTypes = supportedVehicleTypes;
 	}
 
@@ -114,12 +112,12 @@ public class SpotResponseDTO {
 		this.rating = rating;
 	}
 
-	public List<byte[]> getSpotImages() {
-		return spotImages;
+	public byte[] getSpotImage() {
+		return spotImage;
 	}
 
-	public void setSpotImages(List<byte[]> spotImages) {
-		this.spotImages = spotImages;
+	public void setSpotImage(byte[] spotImage) {
+		this.spotImage = spotImage;
 	}
 
 	public Set<VehicleType> getSupportedVehicleTypes() {
@@ -128,5 +126,21 @@ public class SpotResponseDTO {
 
 	public void setSupportedVehicleTypes(Set<VehicleType> supportedVehicleTypes) {
 		this.supportedVehicleTypes = supportedVehicleTypes;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean active) {
+		isActive = active;
 	}
 }

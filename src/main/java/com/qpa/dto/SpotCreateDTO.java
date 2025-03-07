@@ -1,9 +1,6 @@
 package com.qpa.dto;
 
-import com.qpa.entity.PriceType;
-import com.qpa.entity.SpotType;
-import com.qpa.entity.User;
-import com.qpa.entity.VehicleType;
+import com.qpa.entity.*;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -20,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SpotCreateDTO {
 
 	@NotBlank(message = "Spot number is required")
-    @Pattern(regexp = "^[A-Z0-9]{3,10}$", 
+    @Pattern(regexp = "^[A-Z0-9-]{3,10}$",
              message = "Spot number must be alphanumeric, 3-10 characters long")
 	private String spotNumber;
 	
@@ -42,25 +39,23 @@ public class SpotCreateDTO {
 	@NotNull(message = "Price type is required")
 	private PriceType priceType;
 	
-	private List<MultipartFile> images;
+	private MultipartFile image;
 
 	@NotEmpty(message = "At least one supported vehicle type is required")
 	private Set<VehicleType> supportedVehicle;
+
+	private SpotStatus status = SpotStatus.AVAILABLE;
 	
 	public SpotCreateDTO() {
 
 	}
 
-	public SpotCreateDTO(String spotNumber, SpotType spotType, User owner, LocationDTO location, boolean hasEVCharging, double price, PriceType priceType, List<MultipartFile> images, Set<VehicleType> supportedVehicle) {
-		this.spotNumber = spotNumber;
-		this.spotType = spotType;
-		this.owner = owner;
-		this.location = location;
-		this.hasEVCharging = hasEVCharging;
-		this.price = price;
-		this.priceType = priceType;
-		this.images = images;
-		this.supportedVehicle = supportedVehicle;
+	public MultipartFile getImage() {
+		return image;
+	}
+
+	public void setImage(MultipartFile image) {
+		this.image = image;
 	}
 
 	public String getSpotNumber() {
@@ -111,14 +106,6 @@ public class SpotCreateDTO {
 		this.priceType = priceType;
 	}
 
-	public List<MultipartFile> getImages() {
-		return images;
-	}
-
-	public void setImages(List<MultipartFile> images) {
-		this.images = images;
-	}
-
 	public Set<VehicleType> getSupportedVehicle() {
 		return supportedVehicle;
 	}
@@ -133,5 +120,13 @@ public class SpotCreateDTO {
 
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+
+	public SpotStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(SpotStatus status) {
+		this.status = status;
 	}
 }
