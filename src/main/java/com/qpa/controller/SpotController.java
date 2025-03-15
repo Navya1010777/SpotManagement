@@ -20,6 +20,7 @@ import com.qpa.dto.SpotSearchCriteria;
 import com.qpa.dto.SpotStatistics;
 import com.qpa.entity.VehicleType;
 import com.qpa.exception.InvalidEntityException;
+import com.qpa.exception.ResourceNotFoundException;
 import com.qpa.service.SpotService;
 
 import jakarta.validation.Valid;
@@ -77,10 +78,11 @@ public class SpotController {
         return ResponseEntity.ok(spotService.getSpot(spotId));
     }
 
-    @PatchMapping("/{spotId}")
+    @PutMapping("/toggle/{spotId}")
     public ResponseEntity<SpotResponseDTO> toggleSpotActivation(@PathVariable Long spotId) {
         return ResponseEntity.ok(spotService.toggleSpotActivation(spotId));
     }
+
 
     // Vehicle Owner endpoints
     @PatchMapping("/{spotId}/rate")
@@ -119,7 +121,6 @@ public class SpotController {
     // redundant
     @GetMapping("/availability")
     public ResponseEntity<List<SpotResponseDTO>> getAvailableSpotsByCityAndVehicle(
-    		//@NotBlank(message = "City is required")
             @RequestParam String city,
             @RequestParam VehicleType vehicleType) {
         return new ResponseEntity<>(spotService.getAvailableSpotsByCityAndVehicle(city, vehicleType), HttpStatus.OK);
@@ -157,4 +158,7 @@ public class SpotController {
         return new ResponseEntity<>(spotService.getAvailableSpotsByStartAndEndDate(startDate, endDate), HttpStatus.OK);
 
     }
+    
+
+
 }

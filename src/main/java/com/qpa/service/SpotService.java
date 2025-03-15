@@ -115,6 +115,7 @@ public class SpotService {
         );
 
         List<SpotResponseDTO> filteredSpots =  spots.stream()
+        	.filter(spot -> spot.getIsActive() == true)
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
             .filter(spot -> criteria.getHasEVCharging() == null || spot.getHasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
@@ -199,7 +200,7 @@ public class SpotService {
 	public List<SpotResponseDTO> getBookedSpots() {
         List<Spot> bookedSpots = bookingRepository.findBookedSpots();
         if (bookedSpots.isEmpty()) {
-            throw new RuntimeException("No booked spots found.");
+            throw new ResourceNotFoundException("No booked spots found.");
         }
         return bookedSpots.stream()
 				.map(this::convertToDTO)
@@ -209,7 +210,7 @@ public class SpotService {
 	public List<SpotResponseDTO> getAvailableSpotsByStartAndEndDate(LocalDate startDate, LocalDate endDate) {
         List<Spot> bookedSpots = bookingRepository.findSpotsByStartAndEndDate(startDate, endDate);
         if (bookedSpots.isEmpty()) {
-            throw new RuntimeException("No booked spots found between "+ startDate + " and " + endDate);
+            throw new ResourceNotFoundException("No booked spots found between "+ startDate + " and " + endDate);
         }
         return bookedSpots.stream()
 				.map(this::convertToDTO)
