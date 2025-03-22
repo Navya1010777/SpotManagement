@@ -1,9 +1,7 @@
 package com.qpa.controller;
 
-
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
 
 import java.util.List;
 
@@ -20,14 +18,10 @@ import com.qpa.dto.SpotSearchCriteria;
 import com.qpa.dto.SpotStatistics;
 import com.qpa.entity.VehicleType;
 import com.qpa.exception.InvalidEntityException;
-import com.qpa.exception.ResourceNotFoundException;
 import com.qpa.service.SpotService;
 
 import jakarta.validation.Valid;
 
-
-
-//@Validated
 @RestController
 @RequestMapping("/api/spots")
 public class SpotController {
@@ -131,8 +125,7 @@ public class SpotController {
     public ResponseEntity<List<SpotResponseDTO>> getAvailableSpots() {
     	return new ResponseEntity<>(spotService.getAvailableSpots(), HttpStatus.OK);
     }
-    
-    
+
     @GetMapping("/by-booking/{bookingId}")
     public ResponseEntity<SpotResponseDTO> getSpotByBookingId(@PathVariable long bookingId) throws InvalidEntityException{
          
@@ -158,7 +151,5 @@ public class SpotController {
         return new ResponseEntity<>(spotService.getAvailableSpotsByStartAndEndDate(startDate, endDate), HttpStatus.OK);
 
     }
-    
-
 
 }
