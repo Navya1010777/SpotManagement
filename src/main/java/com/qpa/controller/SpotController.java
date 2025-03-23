@@ -135,9 +135,7 @@ public class SpotController {
     
     @GetMapping("/booked")
     public ResponseEntity<List<SpotResponseDTO>> getBookedSpots() {
-
         return new ResponseEntity<>(spotService.getBookedSpots(), HttpStatus.OK);
-
     }
     
     @GetMapping("/by-booking")

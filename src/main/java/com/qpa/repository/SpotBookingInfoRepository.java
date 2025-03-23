@@ -16,10 +16,11 @@ public interface SpotBookingInfoRepository extends JpaRepository<SpotBookingInfo
     
     @Query("SELECT s.spotInfo FROM SpotBookingInfo s WHERE s.status = 'CONFIRMED'")
     List<Spot> findBookedSpots();
-    
+
     @Query("SELECT s.spotInfo FROM SpotBookingInfo s " +
-            "WHERE s.startDate >= :startDate AND s.endDate <= :endDate " +
+            "WHERE :startDate <= s.endDate AND :endDate >= s.startDate " +
             "AND s.status = 'CONFIRMED'")
-     List<Spot> findSpotsByStartAndEndDate(@Param("startDate") LocalDate startDate, 
-                                  @Param("endDate") LocalDate endDate);
+    List<Spot> findSpotsByStartAndEndDate(@Param("startDate") LocalDate startDate,
+                                          @Param("endDate") LocalDate endDate);
+
 }

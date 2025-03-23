@@ -110,6 +110,8 @@ public class SpotService {
 	
 	public List<SpotResponseDTO> getAllSpots() {
 	    return spotRepository.findAll().stream()
+				.filter(spot -> spot.getStatus() == SpotStatus.AVAILABLE)
+				.filter(Spot::getIsActive)
 	            .map(this::convertToDTO)
 	            .collect(Collectors.toList());
 	}
@@ -127,8 +129,9 @@ public class SpotService {
             criteria.getCity()
         );
 
-        List<SpotResponseDTO> filteredSpots =  spots.stream()
-        	.filter(spot -> spot.getIsActive() == true)
+		return spots.stream()
+        	.filter(spot -> spot.getIsActive())
+			.filter(spot -> spot.getStatus() == SpotStatus.AVAILABLE)
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
             .filter(spot -> criteria.getHasEVCharging() == null || spot.getHasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
@@ -137,8 +140,6 @@ public class SpotService {
 			.filter(spot -> criteria.getStatus() == null || spot.getStatus() == criteria.getStatus())
             .map(this::convertToDTO)
             .collect(Collectors.toList());
-
-		return filteredSpots;
     }
 
 	public SpotResponseDTO rateSpot(Long spotId, Double rating) {
@@ -226,6 +227,7 @@ public class SpotService {
             throw new ResourceNotFoundException("No booked spots found between "+ startDate + " and " + endDate);
         }
         return bookedSpots.stream()
+				.filter(spot -> spot.getStatus() == SpotStatus.AVAILABLE)
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
     }
