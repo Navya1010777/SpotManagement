@@ -29,16 +29,19 @@ public class SpotService {
 	private final LocationRepository locationRepository;
 	private final UserRepository userRepository;
 	private final SpotBookingInfoRepository bookingRepository;
+	private final CloudinaryService cloudinaryService;
 	
 	@Autowired
-	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository, UserRepository userRepository, SpotBookingInfoRepository bookingRepository) {
+	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository, UserRepository userRepository, SpotBookingInfoRepository bookingRepository, CloudinaryService cloudinaryService) {
 		this.spotRepository = spotRepository;
 		this.locationRepository = locationRepository;
 		this.userRepository = userRepository;
 		this.bookingRepository = bookingRepository;
+		this.cloudinaryService = cloudinaryService;
 	}
 	
 	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, MultipartFile spotImage, Long userId) throws IOException {
+
 		Spot spot = new Spot();
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
@@ -50,12 +53,18 @@ public class SpotService {
 		spot.setOwner(userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId)));
 
-		spot.setSpotImage(spotImage.getBytes());
-		
 		Location location = new Location();
 		BeanUtils.copyProperties(spotDTO.getLocation(), location);
 		location = locationRepository.save(location);
 		spot.setLocation(location);
+
+		spot = spotRepository.save(spot);
+
+		if (spotImage != null && !spotImage.isEmpty()) {
+			String imageUrl = cloudinaryService.uploadSpotImage(spotImage, spot.getSpotId(), null);
+			spot.setSpotImage(imageUrl);
+			spot = spotRepository.save(spot);
+		}
 
 		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
@@ -73,13 +82,17 @@ public class SpotService {
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
 		spot.setStatus(spotDTO.getStatus());
 
-		if (spotImage != null && !spotImage.isEmpty()) {
-			spot.setSpotImage(spotImage.getBytes());
-		}
-
 		Location location = spot.getLocation();
 		BeanUtils.copyProperties(spotDTO.getLocation(), location);
 		locationRepository.save(location);
+
+		spot = spotRepository.save(spot);
+
+		if (spotImage != null && !spotImage.isEmpty()) {
+			String imageUrl = cloudinaryService.uploadSpotImage(spotImage, spot.getSpotId(), null);
+			spot.setSpotImage(imageUrl);
+			spot = spotRepository.save(spot);
+		}
 
 		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
@@ -97,6 +110,8 @@ public class SpotService {
 	
 	public List<SpotResponseDTO> getAllSpots() {
 	    return spotRepository.findAll().stream()
+				.filter(spot -> spot.getStatus() == SpotStatus.AVAILABLE)
+				.filter(Spot::getIsActive)
 	            .map(this::convertToDTO)
 	            .collect(Collectors.toList());
 	}
@@ -114,8 +129,9 @@ public class SpotService {
             criteria.getCity()
         );
 
-        List<SpotResponseDTO> filteredSpots =  spots.stream()
-        	.filter(spot -> spot.getIsActive() == true)
+		return spots.stream()
+        	.filter(spot -> spot.getIsActive())
+			.filter(spot -> spot.getStatus() == SpotStatus.AVAILABLE)
             .filter(spot -> criteria.getSpotType() == null || spot.getSpotType() == criteria.getSpotType())
             .filter(spot -> criteria.getHasEVCharging() == null || spot.getHasEVCharging() == criteria.getHasEVCharging())
             .filter(spot -> criteria.getPriceType() == null || spot.getPriceType() == criteria.getPriceType())
@@ -124,8 +140,6 @@ public class SpotService {
 			.filter(spot -> criteria.getStatus() == null || spot.getStatus() == criteria.getStatus())
             .map(this::convertToDTO)
             .collect(Collectors.toList());
-
-		return filteredSpots;
     }
 
 	public SpotResponseDTO rateSpot(Long spotId, Double rating) {
@@ -213,6 +227,7 @@ public class SpotService {
             throw new ResourceNotFoundException("No booked spots found between "+ startDate + " and " + endDate);
         }
         return bookedSpots.stream()
+				.filter(spot -> spot.getStatus() == SpotStatus.AVAILABLE)
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
     }

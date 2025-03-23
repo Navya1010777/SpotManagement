@@ -68,9 +68,8 @@ public class Spot {
     
     private LocalDateTime updatedAt;
 
-	@Lob
-	@Column(name = "image_data", columnDefinition = "LONGBLOB")
-	private byte[] spotImage;
+	@Column(name = "image_url")
+	private String spotImage;
     
     @ElementCollection
     @Enumerated(EnumType.STRING)
@@ -93,7 +92,7 @@ public class Spot {
 
 	}
 
-	public Spot(Long spotId, String spotNumber, User owner, SpotType spotType, SpotStatus status, boolean isActive, Location location, boolean hasEVCharging, double price, PriceType priceType, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, byte[] spotImage, Set<VehicleType> supportedVehicleTypes) {
+	public Spot(Long spotId, String spotNumber, User owner, SpotType spotType, SpotStatus status, boolean isActive, Location location, boolean hasEVCharging, double price, PriceType priceType, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, String spotImage, Set<VehicleType> supportedVehicleTypes) {
 		this.spotId = spotId;
 		this.spotNumber = spotNumber;
 		this.owner = owner;
@@ -191,11 +190,11 @@ public class Spot {
 		this.createdAt = createdAt;
 	}
 
-	public byte[] getSpotImage() {
+	public String getSpotImage() {
 		return spotImage;
 	}
 
-	public void setSpotImage(byte[] spotImage) {
+	public void setSpotImage(String spotImage) {
 		this.spotImage = spotImage;
 	}
 

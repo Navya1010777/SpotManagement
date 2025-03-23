@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class SpotCreateDTO {
 
+	private Long id;
+
 	@NotBlank(message = "Spot number is required")
     @Pattern(regexp = "^[A-Z0-9-]{3,10}$",
              message = "Spot number must be alphanumeric, 3-10 characters long")
@@ -50,8 +52,30 @@ public class SpotCreateDTO {
 
 	}
 
+	public SpotCreateDTO(Long id, String spotNumber, SpotType spotType, User owner, LocationDTO location, boolean hasEVCharging, double price, PriceType priceType, MultipartFile image, Set<VehicleType> supportedVehicle, SpotStatus status) {
+		this.id = id;
+		this.spotNumber = spotNumber;
+		this.spotType = spotType;
+		this.owner = owner;
+		this.location = location;
+		this.hasEVCharging = hasEVCharging;
+		this.price = price;
+		this.priceType = priceType;
+		this.image = image;
+		this.supportedVehicle = supportedVehicle;
+		this.status = status;
+	}
+
 	public MultipartFile getImage() {
 		return image;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public void setImage(MultipartFile image) {
