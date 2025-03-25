@@ -3,14 +3,12 @@ package com.qpa.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -26,21 +24,20 @@ public class Location {
 	private String buildingName;
 	private String streetAddress;
 	private String area;
-	
-	//@NotBlank(message = "City is required")
+
 	private String city;
 	
 	private String state;
 	private String pincode;
 	private String landmark;
 	private int floorNumber;
-	
-	@OneToOne(mappedBy = "location")
-	@JsonBackReference
-	private Spot spot;
+
+	@OneToMany(mappedBy = "location")
+	@JsonIgnore
+	private Set<Spot> spots = new HashSet<>();
 
 	public Location(Long locationId, double latitude, double longitude, String buildingName, String streetAddress,
-			String area, String city, String state, String pincode, int floorNumber, Spot spot, String landmark) {
+			String area, String city, String state, String pincode, int floorNumber, Set<Spot> spots, String landmark) {
 		super();
 		this.locationId = locationId;
 		this.latitude = latitude;
@@ -52,7 +49,7 @@ public class Location {
 		this.state = state;
 		this.pincode = pincode;
 		this.floorNumber = floorNumber;
-		this.spot = spot;
+		this.spots = spots;
 		this.landmark = landmark;
 	}
 
@@ -140,12 +137,12 @@ public class Location {
 		this.floorNumber = floorNumber;
 	}
 
-	public Spot getSpot() {
-		return spot;
+	public Set<Spot> getSpots() {
+		return spots;
 	}
 
-	public void setSpot(Spot spot) {
-		this.spot = spot;
+	public void setSpots(Set<Spot> spots) {
+		this.spots = spots;
 	}
 
 	public String getLandmark() {

@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 
 public class LocationDTO {
 	
-
+	private Long locationId;
 	private double latitude;
 	
 
@@ -50,7 +50,7 @@ public class LocationDTO {
 	}
 
 	public LocationDTO(double latitude, double longitude, String buildingName, String streetAddress, String area,
-			String city, String state, String pincode, int floorNumber, String landmark) {
+			String city, String state, String pincode, int floorNumber, String landmark, Long locationId) {
 		super();
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -62,6 +62,7 @@ public class LocationDTO {
 		this.pincode = pincode;
 		this.floorNumber = floorNumber;
 		this.landmark = landmark;
+		this.locationId = locationId;
 	}
 
 	public double getLatitude() {
@@ -142,5 +143,13 @@ public class LocationDTO {
 
 	public void setLandmark(String landmark) {
 		this.landmark = landmark;
+	}
+
+	public Long getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Long locationId) {
+		this.locationId = locationId;
 	}
 }

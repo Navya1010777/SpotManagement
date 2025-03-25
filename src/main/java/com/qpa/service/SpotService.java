@@ -26,22 +26,21 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class SpotService {
 	private final SpotRepository spotRepository;
-	private final LocationRepository locationRepository;
 	private final UserRepository userRepository;
 	private final SpotBookingInfoRepository bookingRepository;
 	private final CloudinaryService cloudinaryService;
+	private final LocationService locationService;
 	
 	@Autowired
-	public SpotService(SpotRepository spotRepository, LocationRepository locationRepository, UserRepository userRepository, SpotBookingInfoRepository bookingRepository, CloudinaryService cloudinaryService) {
+	public SpotService(SpotRepository spotRepository, UserRepository userRepository, SpotBookingInfoRepository bookingRepository, CloudinaryService cloudinaryService, LocationService locationService) {
 		this.spotRepository = spotRepository;
-		this.locationRepository = locationRepository;
 		this.userRepository = userRepository;
 		this.bookingRepository = bookingRepository;
 		this.cloudinaryService = cloudinaryService;
+		this.locationService = locationService;
 	}
-	
-	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, MultipartFile spotImage, Long userId) throws IOException {
 
+	public SpotResponseDTO createSpot(SpotCreateDTO spotDTO, MultipartFile spotImage, Long userId) throws IOException {
 		Spot spot = new Spot();
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
@@ -53,9 +52,8 @@ public class SpotService {
 		spot.setOwner(userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId)));
 
-		Location location = new Location();
-		BeanUtils.copyProperties(spotDTO.getLocation(), location);
-		location = locationRepository.save(location);
+		// Use LocationService to find or create location
+		Location location = locationService.findOrCreateLocation(spotDTO.getLocation());
 		spot.setLocation(location);
 
 		spot = spotRepository.save(spot);
@@ -66,14 +64,15 @@ public class SpotService {
 			spot = spotRepository.save(spot);
 		}
 
-		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
 	}
 
+	// Similar modification for updateSpot method
 	public SpotResponseDTO updateSpot(Long spotId, SpotCreateDTO spotDTO, MultipartFile spotImage) throws InvalidEntityException, IOException {
 		Spot spot = spotRepository.findById(spotId)
 				.orElseThrow(() -> new InvalidEntityException("Spot not found with id : " + spotId));
 
+		// Update spot details
 		spot.setSpotNumber(spotDTO.getSpotNumber());
 		spot.setSpotType(spotDTO.getSpotType());
 		spot.setHasEVCharging(spotDTO.getHasEVCharging());
@@ -82,9 +81,9 @@ public class SpotService {
 		spot.setSupportedVehicleTypes(spotDTO.getSupportedVehicle());
 		spot.setStatus(spotDTO.getStatus());
 
-		Location location = spot.getLocation();
-		BeanUtils.copyProperties(spotDTO.getLocation(), location);
-		locationRepository.save(location);
+		// Use LocationService to find or create location
+		Location location = locationService.findOrCreateLocation(spotDTO.getLocation());
+		spot.setLocation(location);
 
 		spot = spotRepository.save(spot);
 
@@ -94,7 +93,6 @@ public class SpotService {
 			spot = spotRepository.save(spot);
 		}
 
-		spot = spotRepository.save(spot);
 		return convertToDTO(spot);
 	}
 	
